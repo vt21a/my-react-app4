@@ -1,27 +1,27 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import "./App.css";
 import UserProfile from "./UserProfile";
 import AddressForm from "./AddressForm";
 import Preferences from "./Preferences";
 import SaveButton from "./SaveButton";
 
 export default function App() {
-  const [formData, setFormData] = useState(() => {
-    // Load the latest saved data from localStorage
-    const saved = JSON.parse(localStorage.getItem("latestUser") || "{}");
-    return saved;
-  });
+  const [formData, setFormData] = useState({});
+
+  // Load from localStorage on mount
+  useEffect(() => {
+    const savedUsers = JSON.parse(localStorage.getItem("users") || "[]");
+    if (savedUsers.length > 0) {
+      setFormData(savedUsers[savedUsers.length - 1]); // load last saved
+    }
+  }, []);
 
   const handleSubmit = () => {
-    // Save in localStorage array
     const saved = JSON.parse(localStorage.getItem("users") || "[]");
     saved.push(formData);
     localStorage.setItem("users", JSON.stringify(saved));
-
-    // Also save latest data separately to prefill form
-    localStorage.setItem("latestUser", JSON.stringify(formData));
-
     alert("Данните са запазени!");
-    setFormData({}); // Clear form
+    setFormData({}); // clear form
   };
 
   return (
